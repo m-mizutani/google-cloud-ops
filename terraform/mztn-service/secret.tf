@@ -1,17 +1,5 @@
 # Secrets for Warren
 
-# Define secret names
-locals {
-  warren_secrets = [
-    "WARREN_SLACK_OAUTH_TOKEN",
-    "WARREN_OTX_API_KEY",
-    "WARREN_URLSCAN_API_KEY",
-    "WARREN_SLACK_SIGNING_SECRET",
-    "WARREN_VT_API_KEY",
-    "WARREN_IPDB_API_KEY",
-  ]
-}
-
 # Create secrets
 resource "google_secret_manager_secret" "warren_secrets" {
   for_each = toset(local.warren_secrets)

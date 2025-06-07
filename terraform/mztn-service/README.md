@@ -8,12 +8,25 @@
 - GitHub ActionsからのWorkload Identity認証設定
 - 必要なAPIの有効化
 - GitHub Actions用サービスアカウントの作成とEditor権限の付与
+- Artifact Registry (container-images)
+- Warren Cloud Runサービス（条件付きデプロイ）
+- Firestore Database (warren-v1)
+- Cloud Storage (mztn-warren-v1)
+- Secret Manager (Warren用API keys)
 
 ## ファイル構成
 
 - `provider.tf`: Terraformとプロバイダーの基本設定
+- `locals.tf`: 全てのローカル変数（プロジェクト設定、Warren設定など）
 - `workload-identity.tf`: Workload Identity Pool、ProviderおよびService Account設定
-- `main.tf`: ローカル変数と必要なAPIの有効化
+- `main.tf`: 必要なAPIの有効化
+- `artifact-repository.tf`: Docker imageリポジトリ
+- `service-account.tf`: Warren用サービスアカウント
+- `cloud-storage.tf`: Warren用Cloud Storageバケット
+- `firestore.tf`: Warren用Firestoreデータベース
+- `secret.tf`: Warren用Secretの管理
+- `iam.tf`: Warren用IAM権限設定
+- `cloud-run.tf`: Warren Cloud Runサービス
 
 ## セットアップ
 
@@ -35,6 +48,47 @@ locals {
 terraform init
 terraform plan
 terraform apply
+```
+
+## Warren Cloud Runサービスのデプロイ
+
+Warrenサービスは条件付きでデプロイされます。以下の手順でデプロイしてください：
+
+1. **Warren Dockerイメージをビルド・プッシュ**:
+```bash
+# イメージをビルド
+docker build -t warren .
+
+# タグ付け
+docker tag warren asia-northeast1-docker.pkg.dev/mztn-service/container-images/warren:latest
+
+# プッシュ
+docker push asia-northeast1-docker.pkg.dev/mztn-service/container-images/warren:latest
+```
+
+2. **デプロイ設定を有効化**:
+`locals.tf`ファイルでWarrenのデプロイを有効化:
+```hcl
+locals {
+  # Warren configuration
+  deploy_warren     = true   # ← trueに変更
+  warren_image_tag  = "latest"  # 必要に応じて変更
+  # ...
+}
+```
+
+3. **Warrenサービスをデプロイ**:
+```bash
+terraform plan
+terraform apply
+```
+
+4. **Secretの値を設定**:
+```bash
+# 各Secretに値を設定
+echo -n "your-slack-token" | gcloud secrets versions add WARREN_SLACK_OAUTH_TOKEN --data-file=-
+echo -n "your-otx-key" | gcloud secrets versions add WARREN_OTX_API_KEY --data-file=-
+# 他のSecretも同様に設定...
 ```
 
 ## GitHub Actionsでの使用

@@ -1,34 +1,7 @@
 # Cloud Run service for Warren
 
-locals {
-  warren_image_tag = "latest" # Update this to deploy specific version
-}
-
-# Try to check if Warren image exists in Artifact Registry
-# Using external data source to safely check image existence
-data "external" "warren_image_check" {
-  program = [
-    "sh", "-c",
-    <<EOF
-set -e
-if gcloud artifacts docker images list ${local.region}-docker.pkg.dev/${local.project_id}/container-images --filter="name:warren AND tags:${local.warren_image_tag}" --format="value(name)" --quiet | grep -q warren; then
-  echo '{"exists": "true", "image_uri": "${local.region}-docker.pkg.dev/${local.project_id}/container-images/warren:${local.warren_image_tag}"}'
-else
-  echo '{"exists": "false", "image_uri": ""}'
-fi
-EOF
-  ]
-
-  depends_on = [google_artifact_registry_repository.container_images]
-}
-
-locals {
-  warren_image_exists = data.external.warren_image_check.result.exists == "true"
-  warren_image_uri    = data.external.warren_image_check.result.image_uri
-}
-
 resource "google_cloud_run_v2_service" "warren" {
-  count    = local.warren_image_exists ? 1 : 0
+  count    = local.deploy_warren ? 1 : 0
   name     = "warren"
   location = local.region
 
