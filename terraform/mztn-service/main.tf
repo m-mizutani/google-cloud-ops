@@ -2,7 +2,7 @@
 
 locals {
   project_id        = "mztn-service"
-  region           = "asia-northeast1"
+  region            = "asia-northeast1"
   github_repository = "m-mizutani/google-cloud-ops"
 }
 
