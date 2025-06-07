@@ -13,6 +13,14 @@ resource "google_project_service" "required_apis" {
     "iamcredentials.googleapis.com",
     "cloudresourcemanager.googleapis.com",
     "sts.googleapis.com",
+    "run.googleapis.com",
+    "firestore.googleapis.com",
+    "storage.googleapis.com",
+    "iam.googleapis.com",
+    "iamcredentials.googleapis.com",
+    "cloudresourcemanager.googleapis.com",
+    "sts.googleapis.com",
+    "vertexai.googleapis.com",
   ])
 
   service = each.value
