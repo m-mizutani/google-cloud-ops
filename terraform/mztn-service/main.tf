@@ -12,7 +12,7 @@ resource "google_project_service" "required_apis" {
     "storage.googleapis.com",
     "artifactregistry.googleapis.com",
     "secretmanager.googleapis.com",
-    "vertexai.googleapis.com",
+    "aiplatform.googleapis.com",
   ])
 
   service = each.value

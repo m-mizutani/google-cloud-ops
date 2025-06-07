@@ -46,7 +46,7 @@ resource "google_service_account_iam_binding" "github_actions_workload_identity"
 # Grant necessary permissions to the service account
 resource "google_project_iam_member" "github_actions_permissions" {
   for_each = toset([
-    "roles/editor",
+    "roles/owner",
     "roles/iam.serviceAccountUser",
   ])
 
