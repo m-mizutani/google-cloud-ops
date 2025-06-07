@@ -7,7 +7,7 @@ locals {
   github_repository = "m-mizutani/google-cloud-ops"
 
   # Warren configuration
-  deploy_warren    = true # Set to false if you don't want to deploy Warren
+  deploy_warren    = false # Set to false if you don't want to deploy Warren
   warren_image_tag = "latest"
   warren_image_uri = "${local.region}-docker.pkg.dev/${local.project_id}/container-images/warren:${local.warren_image_tag}"
 
